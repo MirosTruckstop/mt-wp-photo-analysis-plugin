@@ -21,7 +21,7 @@ class MT_Admin_View_PhotoAnaysis {
         return $photos;
     }
 	
-	public function __getPhotos($limit=1, $output_type='OBJECT') {
+	public static function __getPhotos($limit=1, $output_type='OBJECT') {
 		global $wpdb;
 		return $wpdb->get_results("SELECT id, date FROM wp_mt_photo ORDER BY date DESC LIMIT ${limit}", $output_type);
 	}
