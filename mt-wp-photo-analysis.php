@@ -21,4 +21,6 @@ define('MT_PA_DIR', WP_PLUGIN_DIR.'/'.MT_PA_NAME);
  */
 define('MT_PA_DIR_SRC_PHP', MT_PA_DIR.'/src/php');
 
+require_once(MT_PA_DIR.'/vendor/autoload.php');
 require_once(MT_PA_DIR.'/mt-wp-photo-analysis.pages.php');
+require_once(MT_PA_DIR.'/mt-wp-photo-analysis.routing.php');

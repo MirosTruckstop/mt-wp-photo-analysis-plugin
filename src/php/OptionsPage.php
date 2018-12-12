@@ -1,25 +1,18 @@
 <?php
-
+namespace MT\PhotoAnalysis;
 use Google\Cloud\PubSub\PubSubClient;
 
-/**
- * Dashboard widget to display relevant information on the administration home
- * page.
- * 
- * @package back-end
- * @subpackage view
- */
-class MT_Admin_View_PhotoAnaysis {
+class OptionsPage {
 	
 	const queue_topic = 'photo-analysis-request';
-    
-    private function __sample_publish() {
-        $photos = $this->__getPhotos();
+
+	private function __sample_publish() {
+		$photos = $this->__getPhotos();
 		foreach ($photos as $photo) {
 			$this->publish_message(self::queue_topic, $photo->id);
 		}
-        return $photos;
-    }
+		return $photos;
+	}
 	
 	public static function __getPhotos($limit=1, $output_type='OBJECT') {
 		global $wpdb;
@@ -33,16 +26,16 @@ class MT_Admin_View_PhotoAnaysis {
 	* @param string $topicName  The Pub/Sub topic name.
 	* @param string $message  The message to publish.
 	*/
-   private function publish_message($topicName, $message) {
-	   $pubsub = new PubSubClient([
-		   #'projectId' => $projectId,
-		   'keyFile' => json_decode(GCP_APPLICATION_KEY, true)
-	   ]);
-	   $topic = $pubsub->topic($topicName);
-	   $topic->publish(['data' => $message]);
-   }
-    
-    public function outputContent() {
+	private function publish_message($topicName, $message) {
+		$pubsub = new PubSubClient([
+			#'projectId' => $projectId,
+			'keyFile' => json_decode(GCP_APPLICATION_KEY, true)
+		]);
+		$topic = $pubsub->topic($topicName);
+		$topic->publish(['data' => $message]);
+	}
+
+	public function outputContent() {
 	?>
 	<div class="wrap">
 	<h2>Fotoanalyse (Beta)</h2>
@@ -50,6 +43,5 @@ class MT_Admin_View_PhotoAnaysis {
 		<?php echo FUU; ?>
 	</div>
 	<?php
-    }
-    
+	}
 }

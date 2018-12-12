@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
-
+namespace MT\PhotoAnalysis;
 use PHPUnit\Framework\TestCase;
 
-class PhotoAnalysisTest extends TestCase {
+class OptionsPageTest extends TestCase {
 	
 	private function __createWpdb($results) {
 		$wpdb = $this->getMockBuilder('wpdb')
@@ -17,7 +17,7 @@ class PhotoAnalysisTest extends TestCase {
 	public function testGetPhotos() {
 		global $wpdb;
 		$wpdb = $this->__createWpdb('some response');
-		$result = MT_Admin_View_PhotoAnaysis::__getPhotos();
+		$result = OptionsPage::__getPhotos();
 		$this->assertEquals($result, 'some response');
 	}
 }
