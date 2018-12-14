@@ -38,9 +38,8 @@ class OptionsPage {
 	public function outputContent() {
 	?>
 	<div class="wrap">
-	<h2>Fotoanalyse (Beta)</h2>
-        <p>Hier gibt es nichts zu sehen, oder doch: <?php echo count($this->__sample_publish()); ?>!</p>
-		<?php echo FUU; ?>
+	<h2><?php _e('Fotoanalyse');?> (<?php _e('Beta'); ?></h2>
+		<p><?php _e('Hier gibt es nichts zu sehen, oder doch'); ?>: <?php echo count($this->__sample_publish()); ?>!</p>
 	</div>
 	<?php
 	}
