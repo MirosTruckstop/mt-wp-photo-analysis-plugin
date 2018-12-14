@@ -7,20 +7,9 @@ Version: 0.1.0
 Author: Xennis
 Text Domain: mt-wp-photo-analysis
 */
-
-/**
- * Plugin name
- */
-define('MT_PA_NAME', dirname(plugin_basename( __FILE__ )));
-/**
- * Plugin directory
- */
-define('MT_PA_DIR', WP_PLUGIN_DIR.'/'.MT_PA_NAME);
-/**
- * PHP source directory
- */
-define('MT_PA_DIR_SRC_PHP', MT_PA_DIR.'/src/php');
-
+require_once(plugin_dir_path(__FILE__).'/vendor/autoload.php');
+use MT\PhotoAnalysis\OptionsPage;
+use MT\PhotoAnalysis\RestController;
 
 register_activation_hook(__FILE__, function() {
 	# Register a custom role and cap for the REST API
@@ -38,7 +27,14 @@ register_deactivation_hook(__FILE__, function() {
 	}
 });
 
+add_action('rest_api_init', function () {
+	$controller = new RestController();
+	$controller->register_routes();
+});
 
-require_once(MT_PA_DIR.'/vendor/autoload.php');
-require_once(MT_PA_DIR.'/mt-wp-photo-analysis.pages.php');
-require_once(MT_PA_DIR.'/mt-wp-photo-analysis.routing.php');
+add_action('admin_menu', function() {
+	add_options_page(__('Fotoanalyse'), __('Fotoanalyse'), 'activate_plugins', 'mt-photo-analysis', function() {
+		$view = new OptionsPage();
+		$view->outputContent();
+	});
+});
