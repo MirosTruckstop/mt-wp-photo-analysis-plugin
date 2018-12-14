@@ -9,3 +9,9 @@ Requirements
 
 Steps
 1. Install the requirements: `composer install`
+
+#### Sync required files
+
+```sh
+rsync -r --relative mt-wp-photo-analysis.* src vendor/autoload.php vendor/composer <host>:<wordpress-dir>/wp-content/plugins/mt-wp-photo-analysis/
+```
