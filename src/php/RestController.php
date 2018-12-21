@@ -41,9 +41,16 @@ class RestController extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	*/
 	public function update_text_item($request) {
+		$contentType = $request->get_header('content-type');
+		if (empty($contentType)) {
+			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('missing content type'));
+		}
+		if (strtolower($contentType) !== 'application/json') {
+			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('wrong content type'));
+		}
 		$body = $request->get_body();
 		if (empty($body)) {
-			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('message', 'missing body'));
+			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('missing body'));
 		}
 		$data = 'Hello World';
 		return new WP_REST_Response($data, self::HTTP_STATUS_200_OK);

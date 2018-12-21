@@ -18,6 +18,6 @@ class OptionsPageTest extends TestCase {
 		global $wpdb;
 		$wpdb = $this->__createWpdb('some response');
 		$result = OptionsPage::__getPhotos();
-		$this->assertEquals($result, 'some response');
+		$this->assertEquals('some response', $result);
 	}
 }
