@@ -10,13 +10,19 @@ Text Domain: mt-wp-photo-analysis
 require_once(plugin_dir_path(__FILE__).'/vendor/autoload.php');
 use MT\PhotoAnalysis\OptionsPage;
 use MT\PhotoAnalysis\RestController;
+use MT\PhotoAnalysis\Setup;
 
 register_activation_hook(__FILE__, function() {
 	# Register a custom role and cap for the REST API
 	add_role('mt_pa_editor', __('MT Photo Analysis Editor'));
 	$role = get_role('mt_pa_editor');
 	$role->add_cap('mt_pa_edit_texts');
+	
+	# Create the database table to store the photo texts
+	require_once(ABSPATH.'wp-admin/includes/upgrade.php');
+	dbDelta(Setup::sqlCreateTable());
 });
+
 
 register_deactivation_hook(__FILE__, function() {
 	# Remove the custom cap and role for the REST API
@@ -25,6 +31,10 @@ register_deactivation_hook(__FILE__, function() {
 		$role->remove_cap('mt_pa_edit_texts');
 		remove_role('mt_pa_editor');
 	}
+	
+	# Drop the database table
+	global $wpdb;
+	$wpdb->query(Setup::sqlDropTable());
 });
 
 add_action('rest_api_init', function () {
