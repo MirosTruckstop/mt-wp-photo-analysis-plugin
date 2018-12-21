@@ -4,7 +4,7 @@ namespace MT\PhotoAnalysis;
 use PHPUnit\Framework\TestCase;
 
 
-class SetupTest extends TestCase {
+class PhotoTextModelTest extends TestCase {
 	
 	private function __createWpdb() {
 		$wpdb = $this->getMockBuilder('wpdb')
@@ -20,7 +20,7 @@ class SetupTest extends TestCase {
 		global $wpdb;
 		$wpdb = $this->__createWpdb();
 		
-		$actual = Setup::sqlCreateTable();
+		$actual = PhotoTextModel::sqlCreateTable();
 		$expected = "CREATE TABLE `wp_mt_pa_photo_text` (
 			`photo_id` smallint(4) unsigned NOT NULL,
 			`text` varchar(60),
@@ -34,7 +34,7 @@ class SetupTest extends TestCase {
 		global $wpdb;
 		$wpdb = $this->__createWpdb();
 		
-		$actual = Setup::sqlDropTable();
+		$actual = PhotoTextModel::sqlDropTable();
 		$expected = "DROP TABLE IF EXISTS `wp_mt_pa_photo_text`";
 		$this->assertEquals($expected, $actual);
 	}

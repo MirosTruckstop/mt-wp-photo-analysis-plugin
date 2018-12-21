@@ -9,8 +9,8 @@ Text Domain: mt-wp-photo-analysis
 */
 require_once(plugin_dir_path(__FILE__).'/vendor/autoload.php');
 use MT\PhotoAnalysis\OptionsPage;
+use MT\PhotoAnalysis\PhotoTextModel;
 use MT\PhotoAnalysis\RestController;
-use MT\PhotoAnalysis\Setup;
 
 register_activation_hook(__FILE__, function() {
 	# Register a custom role and cap for the REST API
@@ -20,7 +20,7 @@ register_activation_hook(__FILE__, function() {
 	
 	# Create the database table to store the photo texts
 	require_once(ABSPATH.'wp-admin/includes/upgrade.php');
-	dbDelta(Setup::sqlCreateTable());
+	dbDelta(PhotoTextModel::sqlCreateTable());
 });
 
 
@@ -34,7 +34,7 @@ register_deactivation_hook(__FILE__, function() {
 	
 	# Drop the database table
 	global $wpdb;
-	$wpdb->query(Setup::sqlDropTable());
+	$wpdb->query(PhotoTextModel::sqlDropTable());
 });
 
 add_action('rest_api_init', function () {

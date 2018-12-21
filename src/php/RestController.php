@@ -13,6 +13,7 @@ class RestController extends WP_REST_Controller {
 	const HTTP_STATUS_201_CREATED = 201;
 	const HTTP_STATUS_400_BAD_REQUEST = 400;
 	const HTTP_STATUS_405_METHOD_NOT_ALLOWED = 405;
+	const HTTP_STATUS_500_INTERNAL_ERROR = 500;
 	
 	public function register_routes() {
 		$namespace = 'mt-wp-photo-analysis/v1';
@@ -23,7 +24,7 @@ class RestController extends WP_REST_Controller {
 				'args' => array(
 					'id' => array(
 						'validate_callback' => function($param, $request, $key) {
-							return is_numeric($param);
+							return is_numeric($param) && strlen($param) <= PhotoTextModel::PHOTO_ID_LENGTH;
 						}
 					)
 				),
@@ -52,7 +53,29 @@ class RestController extends WP_REST_Controller {
 		if (empty($body)) {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('missing body'));
 		}
-		$data = 'Hello World';
-		return new WP_REST_Response($data, self::HTTP_STATUS_200_OK);
+		$id = (int) $request['id']; # guaranteed by validate_callback
+		$texts = json_decode($body);
+		return $this->__update_text_time($id, $texts);
+	}
+	
+	private function __update_text_time($id, $texts) {
+		if (!is_array($texts) ||
+				sizeof($texts) == 0 ||
+				sizeof($texts) > 50) { # Limit the number of texts
+			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid body'));
+		}
+		foreach ($texts as $text) {
+			if (strlen($text) > PhotoTextModel::TEXT_LENGTH) {
+				return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid text'));
+			}
+		}
+		PhotoTextModel::delete($id);
+		foreach ($texts as $text) {
+			$result = PhotoTextModel::insert($id, $text);
+			if (!$result) {
+				return new WP_Error(self::HTTP_STATUS_500_INTERNAL_ERROR, __('insert'));
+			}
+		}
+		return new WP_REST_Response("OK", self::HTTP_STATUS_200_OK);
 	}
 }
