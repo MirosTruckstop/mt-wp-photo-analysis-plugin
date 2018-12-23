@@ -12,7 +12,7 @@ class RestController extends WP_REST_Controller {
 	const HTTP_STATUS_200_OK = 200;
 	const HTTP_STATUS_201_CREATED = 201;
 	const HTTP_STATUS_400_BAD_REQUEST = 400;
-	const HTTP_STATUS_405_METHOD_NOT_ALLOWED = 405;
+	const HTTP_STATUS_404_NOT_FOUND = 404;
 	const HTTP_STATUS_500_INTERNAL_ERROR = 500;
 	
 	public function register_routes() {
@@ -24,7 +24,7 @@ class RestController extends WP_REST_Controller {
 				'args' => array(
 					'id' => array(
 						'validate_callback' => function($param, $request, $key) {
-							return is_numeric($param) && strlen($param) <= PhotoTextModel::PHOTO_ID_LENGTH;
+							return is_numeric($param) && strlen($param) <= 4; # db field length
 						}
 					)
 				),
@@ -54,27 +54,40 @@ class RestController extends WP_REST_Controller {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('missing body'));
 		}
 		$id = (int) $request['id']; # guaranteed by validate_callback
-		$texts = json_decode($body);
-		return $this->__update_text_time($id, $texts);
-	}
-	
-	private function __update_text_time($id, $texts) {
-		if (!is_array($texts) ||
-				sizeof($texts) == 0 ||
-				sizeof($texts) > 50) { # Limit the number of texts
+		$data = json_decode($body);
+		if (!property_exists($data, 'textAnnotations')) {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid body'));
 		}
-		foreach ($texts as $text) {
-			if (strlen($text) > PhotoTextModel::TEXT_LENGTH) {
-				return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid text'));
-			}
+		$textAnnotations = $data->textAnnotations;
+		if (!is_string($textAnnotations) ||
+				strlen($textAnnotations) == 0 ||
+				strlen($textAnnotations) > 500) { # db field limit
+			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid body'));
 		}
-		PhotoTextModel::delete($id);
-		foreach ($texts as $text) {
-			$result = PhotoTextModel::insert($id, $text);
-			if (!$result) {
-				return new WP_Error(self::HTTP_STATUS_500_INTERNAL_ERROR, __('insert'));
-			}
+		return $this->__update_text_annotations($id, $textAnnotations);
+	}
+	
+	private function __update_text_annotations($id, $textAnnotations) {
+		global $wpdb;
+		$tableName = $wpdb->prefix.'mt_photo';
+		$photo = $wpdb->get_row("SELECT `id`, `description` FROM $tableName WHERE id = $id");
+		if (!$photo) {
+			return new WP_Error(self::HTTP_STATUS_404_NOT_FOUND, __('unknown id'));
+		}
+		$searchText = $photo->description.' '.$textAnnotations;
+		$searchText = strlen($searchText) > 1000 ? substr($searchText, 0, 999) : $searchText;
+		$result = $wpdb->update(
+			$tableName,
+			array(
+				'detected_text' => $textAnnotations,
+				'search_text' => $searchText
+			),
+			array('id' => $id),
+			array('%s', '%s'),
+			array('%d')
+		);
+		if (!$result) {
+			return new WP_Error(self::HTTP_STATUS_500_INTERNAL_ERROR, __('update error'));
 		}
 		return new WP_REST_Response("OK", self::HTTP_STATUS_200_OK);
 	}

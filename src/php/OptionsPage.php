@@ -13,7 +13,7 @@ class OptionsPage {
 			$attributes = ['id' => $photo->id];
 			$this->publish_message(self::queue_topic, $message, $attributes);
 		}
-		return $photos;
+		return count($photos);
 	}
 	
 	public static function __getPhotos($limit=1, $output_type='OBJECT') {
@@ -44,7 +44,7 @@ class OptionsPage {
 	?>
 	<div class="wrap">
 	<h2><?php _e('Fotoanalyse');?> (<?php _e('Beta'); ?>)</h2>
-		<p><?php _e('Hier gibt es nichts zu sehen, oder doch'); ?>: <?php echo count($this->__sample_publish()); ?>!</p>
+		<p><?php _e('Hier gibt es nichts zu sehen, oder doch'); ?>: <?php echo $this->__sample_publish(); ?>!</p>
 	</div>
 	<?php
 	}
