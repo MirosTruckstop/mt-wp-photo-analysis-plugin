@@ -5,10 +5,10 @@ class OptionsPage {
 
 	private static function __analyseAllPhotos() {
 		$queue = new QueueClient(get_option('mt_pa_queue_topic'));
-		$imageBasePath = get_bloginfo('url').'/bilder/';
+		$photoBasePath = get_bloginfo('url').'/bilder';
 		$photos = self::__getPhotos();
 		foreach ($photos as $photo) {
-			$message = $imageBasePath.$photo->path;
+			$message = $photoBasePath.'/'.$photo->path;
 			$queue->publish($message, ['id' => $photo->id]);
 		}
 		return count($photos);
@@ -33,7 +33,7 @@ class OptionsPage {
 						<lable for="mt_pa_queue_topic"><?php _e('Thema der Warteschlange'); ?></lable>
 					</th>
 					<td>
-						<input name="mt_pa_queue_topic" type="text" value="<?php echo get_option('mt_pa_queue_topic'); ?>" disabled>
+						<input name="mt_pa_queue_topic" type="text" value="<?php echo get_option(MT_PA_OPTION_QUEUE_TOPIC); ?>" disabled>
 					</td>
 				</tr>
 			</tbody>

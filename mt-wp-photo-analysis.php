@@ -12,6 +12,7 @@ use MT\PhotoAnalysis\OptionsPage;
 use MT\PhotoAnalysis\RestController;
 
 define('MT_PA_NAME', dirname(plugin_basename( __FILE__ )));
+define('MT_PA_OPTION_QUEUE_TOPIC', 'mt_pa_queue_topic');
 
 register_activation_hook(__FILE__, function() {
 	# Register a custom role and cap for the REST API
@@ -29,7 +30,7 @@ register_deactivation_hook(__FILE__, function() {
 		remove_role('mt_pa_editor');
 	}
 	# Remove the settings
-	unregister_setting(MT_PA_NAME, 'mt_pa_queue_topic');
+	unregister_setting(MT_PA_NAME, MT_PA_OPTION_QUEUE_TOPIC);
 });
 
 add_action('rest_api_init', function() {
@@ -38,9 +39,9 @@ add_action('rest_api_init', function() {
 });
 
 add_action('admin_init', function() {
-	register_setting(MT_PA_NAME, 'mt_pa_queue_topic');
-	if (!get_option('mt_pa_queue_topic')) {
-		update_option('mt_pa_queue_topic', 'photo-analysis-request');
+	register_setting(MT_PA_NAME, MT_PA_OPTION_QUEUE_TOPIC);
+	if (!get_option(MT_PA_OPTION_QUEUE_TOPIC)) {
+		update_option(MT_PA_OPTION_QUEUE_TOPIC, 'photo-analysis-request');
 	}
 });
 
