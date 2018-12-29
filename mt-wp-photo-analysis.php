@@ -11,6 +11,8 @@ require_once(plugin_dir_path(__FILE__).'/vendor/autoload.php');
 use MT\PhotoAnalysis\OptionsPage;
 use MT\PhotoAnalysis\RestController;
 
+define('MT_PA_NAME', dirname(plugin_basename( __FILE__ )));
+
 register_activation_hook(__FILE__, function() {
 	# Register a custom role and cap for the REST API
 	add_role('mt_pa_editor', __('MT Photo Analysis Editor'));
@@ -26,11 +28,20 @@ register_deactivation_hook(__FILE__, function() {
 		$role->remove_cap('mt_pa_edit_texts');
 		remove_role('mt_pa_editor');
 	}
+	# Remove the settings
+	unregister_setting(MT_PA_NAME, 'mt_pa_queue_topic');
 });
 
-add_action('rest_api_init', function () {
+add_action('rest_api_init', function() {
 	$controller = new RestController();
 	$controller->register_routes();
+});
+
+add_action('admin_init', function() {
+	register_setting(MT_PA_NAME, 'mt_pa_queue_topic');
+	if (!get_option('mt_pa_queue_topic')) {
+		update_option('mt_pa_queue_topic', 'photo-analysis-request');
+	}
 });
 
 add_action('admin_menu', function() {
