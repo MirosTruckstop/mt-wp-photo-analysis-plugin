@@ -13,5 +13,5 @@ Steps
 #### Sync required files
 
 ```sh
-rsync -r --relative mt-wp-photo-analysis.* src vendor/autoload.php vendor/composer <host>:<wordpress-dir>/wp-content/plugins/mt-wp-photo-analysis/
+rsync -r --relative *.php src vendor/autoload.php vendor/composer <host>:<wordpress-dir>/wp-content/plugins/mt-wp-photo-analysis/
 ```
