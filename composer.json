@@ -4,6 +4,8 @@
             "src/php"
         ]
     },
+    "description": "",
+    "name": "mt/wp-photo-analysis",
     "require": {
         "google/cloud-pubsub": "1.7.*"
     },
