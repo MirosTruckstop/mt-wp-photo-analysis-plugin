@@ -1,10 +1,12 @@
 <?php
 namespace MT\PhotoAnalysis;
+
 use \WP_Error as WP_Error;
 use \WP_REST_Controller as WP_REST_Controller;
 use \WP_REST_Response as WP_REST_Response;
 
-class RestController extends WP_REST_Controller {
+class RestController extends WP_REST_Controller
+{
 	
 	const HEADER_CONTENT_TYPE = 'Content-Type';
 	const HEADER_CONTENT_TYPE_JSON = 'application/json';
@@ -15,20 +17,23 @@ class RestController extends WP_REST_Controller {
 	const HTTP_STATUS_404_NOT_FOUND = 404;
 	const HTTP_STATUS_500_INTERNAL_ERROR = 500;
 	
-	public function register_routes() {
+	public function registerRoutes()
+	{
 		$namespace = 'mt-wp-photo-analysis/v1';
-		register_rest_route($namespace, '/text/(?P<id>\d+)',
+		register_rest_route(
+			$namespace,
+			'/text/(?P<id>\d+)',
 			array(
 				'methods' => 'PUT',
-				'callback' => array($this, 'update_text_item'),
+				'callback' => array($this, 'updateTextItem'),
 				'args' => array(
 					'id' => array(
-						'validate_callback' => function($param, $request, $key) {
-							return is_numeric($param) && strlen($param) <= 4; # db field length
+						'validate_callback' => function ($param, $request, $key) {
+							return is_numeric($param) && strlen($param) <= 4; // db field length
 						}
 					)
 				),
-				'permission_callback' => function() {
+				'permission_callback' => function () {
 					return current_user_can('mt_pa_edit_texts');
 				}
 			)
@@ -36,12 +41,12 @@ class RestController extends WP_REST_Controller {
 	}
 	
 	/**
-	 * 
-	 *
 	 * @param WP_REST_Request $request Full data about the request.
+	 *
 	 * @return WP_Error|WP_REST_Response
-	*/
-	public function update_text_item($request) {
+	 */
+	public function updateTextItem($request)
+	{
 		$contentType = $request->get_header('content-type');
 		if (empty($contentType)) {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('missing content type'));
@@ -53,21 +58,23 @@ class RestController extends WP_REST_Controller {
 		if (empty($body)) {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('missing body'));
 		}
-		$id = (int) $request['id']; # guaranteed by validate_callback
+		$id = (int) $request['id']; // guaranteed by validate_callback
 		$data = json_decode($body);
 		if (!property_exists($data, 'textAnnotations')) {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid body'));
 		}
 		$textAnnotations = $data->textAnnotations;
-		if (!is_string($textAnnotations) ||
-				strlen($textAnnotations) == 0 ||
-				strlen($textAnnotations) > 500) { # db field limit
+		if (!is_string($textAnnotations)
+			|| strlen($textAnnotations) == 0
+			|| strlen($textAnnotations) > 500
+		) {
 			return new WP_Error(self::HTTP_STATUS_400_BAD_REQUEST, __('invalid body'));
 		}
-		return $this->__update_text_annotations($id, $textAnnotations);
+		return $this->updateTextAnnotations($id, $textAnnotations);
 	}
 	
-	private function __update_text_annotations($id, $textAnnotations) {
+	private function updateTextAnnotations($id, $textAnnotations)
+	{
 		global $wpdb;
 		$tableName = $wpdb->prefix.'mt_photo';
 		$photo = $wpdb->get_row("SELECT `id`, `description` FROM $tableName WHERE id = $id");

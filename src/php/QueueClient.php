@@ -1,14 +1,16 @@
 <?php
 namespace MT\PhotoAnalysis;
+
 use Google\Cloud\PubSub\PubSubClient;
 
-class QueueClient {
+class QueueClient
+{
 	
 	/**
-	 * 
 	 * @param string $topicName The Pub/Sub topic name.
 	 */
-	public function __construct($topicName) {
+	public function __construct($topicName)
+	{
 		$pubsub = new PubSubClient([
 			'keyFile' => json_decode(GCP_APPLICATION_KEY, true)
 		]);
@@ -18,14 +20,16 @@ class QueueClient {
 	/**
 	 * Publishes a message for the Pub/Sub topic.
 	 *
-	 * @param string $message  The message to publish.
-	 * @param array $attributes The attributes to publish
+	 * @param string $message    The message to publish.
+	 * @param array  $attributes The attributes to publish
+	 *
+	 * @return null
 	 */
-	public function publish($message, $attributes) {
+	public function publish($message, $attributes)
+	{
 		$this->topic->publish([
 			'data' => $message,
 			'attributes' => $attributes
 		]);
 	}
-	
 }

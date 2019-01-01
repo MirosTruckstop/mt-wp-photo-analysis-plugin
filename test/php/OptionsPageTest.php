@@ -1,23 +1,27 @@
 <?php
 declare(strict_types=1);
 namespace MT\PhotoAnalysis;
+
 use PHPUnit\Framework\TestCase;
 
-class OptionsPageTest extends TestCase {
+class OptionsPageTest extends TestCase
+{
 	
-	private function __createWpdb($results) {
+	private function createWpdb($results)
+	{
 		$wpdb = $this->getMockBuilder('wpdb')
-				->setMethods(array('get_results'))
-				->getMock();
+			->setMethods(array('get_results'))
+			->getMock();
 		$wpdb->method('get_results')
-			 ->willReturn($results);
+			->willReturn($results);
 		return $wpdb;
 	}
 	
-	public function testGetPhotos() {
+	public function testGetPhotos()
+	{
 		global $wpdb;
-		$wpdb = $this->__createWpdb('some response');
-		$result = OptionsPage::__getPhotos();
+		$wpdb = $this->createWpdb('some response');
+		$result = OptionsPage::getPhotos();
 		$this->assertEquals('some response', $result);
 	}
 }
