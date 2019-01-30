@@ -28,6 +28,12 @@ Requirements
         [...]
     }');
     ```
+
+4. Set the JWT used by the cloud function in the `wp-config.php` file
+    ```php
+    define('GCP_JWT', 'JWT-HERE');
+    ```
+
 ## Development
 
 Requirements

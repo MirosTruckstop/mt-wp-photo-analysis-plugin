@@ -20,15 +20,19 @@ class QueueClient
 	/**
 	 * Publishes a message for the Pub/Sub topic.
 	 *
-	 * @param string $message    The message to publish.
+	 * @param string $image_uri  The image URI to publish.
 	 * @param array  $attributes The attributes to publish
 	 *
 	 * @return null
 	 */
-	public function publish($message, $attributes)
+	public function publish($image_uri, $attributes)
 	{
+		$data = json_encode([
+			'image_uri' => $image_uri,
+			'jwt' => GCP_JWT
+		]);
 		$this->topic->publish([
-			'data' => $message,
+			'data' => $data,
 			'attributes' => $attributes
 		]);
 	}

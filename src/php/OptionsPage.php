@@ -10,8 +10,8 @@ class OptionsPage
 		$photoBasePath = get_bloginfo('url').'/bilder';
 		$photos = self::getPhotos();
 		foreach ($photos as $photo) {
-			$message = $photoBasePath.'/'.$photo->path;
-			$queue->publish($message, ['id' => $photo->id]);
+			$image_uri = $photoBasePath.'/'.$photo->path;
+			$queue->publish($image_uri, ['id' => $photo->id]);
 		}
 		return count($photos);
 	}
