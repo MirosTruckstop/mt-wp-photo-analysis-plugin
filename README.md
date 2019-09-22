@@ -1,4 +1,4 @@
-# MT Wordpress Photo Analysis Plugin
+# MT WordPress Photo Analysis Plugin
 
 [![Build Status](https://travis-ci.org/MirosTruckstop/mt-wp-photo-analysis-plugin.svg?branch=master)](https://travis-ci.org/MirosTruckstop/mt-wp-photo-analysis-plugin)
 
